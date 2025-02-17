@@ -4,6 +4,7 @@ import { CreateUsuarioDto } from './dto/usuario.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { hash } from 'bcrypt';
 import { vi_usuario } from '@prisma/client';
+import { PublicUsuario } from 'prisma/prisma.types';
 
 @Injectable()
 export class UsuarioService {
@@ -56,12 +57,14 @@ export class UsuarioService {
     });
   }
 
-  getPublicUserData(usuario: vi_usuario) {
+  getPublicUserData(usuario: vi_usuario): PublicUsuario {
     return {
       id: usuario.id,
       nombre: usuario.nombre,
       apellido: usuario.apellido,
       correo: usuario.correo,
+      imagenperfil: usuario.imagenperfil,
+      puntosacumulados: usuario.puntosacumulados,
     };
   }
 }
