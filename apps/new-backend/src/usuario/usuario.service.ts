@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/usuario.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { hash } from 'bcrypt';
+import { vi_usuario } from '@prisma/client';
 
 @Injectable()
 export class UsuarioService {
@@ -36,11 +37,31 @@ export class UsuarioService {
       },
     });
 
+    return this.getPublicUserData(newUser);
+  }
+
+  async findByCorreo(correo: string) {
+    return await this.prisma.vi_usuario.findUnique({
+      where: {
+        correo: correo,
+      },
+    });
+  }
+
+  async findById(id: string) {
+    return await this.prisma.vi_usuario.findUnique({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  getPublicUserData(usuario: vi_usuario) {
     return {
-      id: newUser.id,
-      nombre: newUser.nombre,
-      apellido: newUser.apellido,
-      correo: newUser.correo,
+      id: usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      correo: usuario.correo,
     };
   }
 }
