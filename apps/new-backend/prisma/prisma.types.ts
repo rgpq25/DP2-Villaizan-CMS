@@ -10,3 +10,10 @@ export type PublicUsuario = Prisma.vi_usuarioGetPayload<{
     puntosacumulados: true;
   };
 }>;
+
+export type JwtPayload = {
+  username: string;
+  sub: {
+    name: string;
+  };
+};

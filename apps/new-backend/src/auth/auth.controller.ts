@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { CreateUsuarioDto } from 'src/usuario/dto/usuario.dto';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
+import { RefreshJwtGuard } from './guards/refresh.guard';
+import { JwtPayload } from 'prisma/prisma.types';
 
 @Controller('auth')
 export class AuthController {
@@ -19,5 +21,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() dto: LoginDto) {
     return await this.authService.login(dto);
+  }
+
+  @UseGuards(RefreshJwtGuard)
+  @Post('refresh')
+  async refreshToken(@Request() req: { user: JwtPayload }) {
+    return await this.authService.refreshToken(req.user);
   }
 }

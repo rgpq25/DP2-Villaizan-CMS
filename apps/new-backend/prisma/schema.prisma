@@ -760,7 +760,7 @@ model vi_recompensa_puntos {
 
 model vi_rol {
   id                   String           @id @db.VarChar(50)
-  nombre               String           @db.VarChar(255) @unique
+  nombre               String           @unique @db.VarChar(255)
   estaactivo           Boolean          @default(true)
   desactivadoen        DateTime?        @db.Timestamp(6)
   creadoen             DateTime         @default(now()) @db.Timestamp(6)
@@ -860,7 +860,7 @@ model vi_usuario {
   nombre                                                 String                     @db.VarChar(100)
   apellido                                               String                     @db.VarChar(100)
   numerotelefono                                         String?                    @db.VarChar(15)
-  correo                                                 String?                    @unique @db.VarChar(150)
+  correo                                                 String                     @unique @db.VarChar(150)
   contrasena                                             String                     @db.VarChar(255)
   estaactivo                                             Boolean                    @default(true)
   desactivadoen                                          DateTime?                  @db.Timestamp(6)

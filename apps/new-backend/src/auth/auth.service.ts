@@ -1,8 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from './dto/auth.dto';
-import { UsuarioService } from 'src/usuario/usuario.service';
-import { compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcrypt';
+import { UsuarioService } from 'src/usuario/usuario.service';
+import { LoginDto } from './dto/auth.dto';
+import { JwtPayload } from 'prisma/prisma.types';
 
 @Injectable()
 export class AuthService {
@@ -13,10 +14,10 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     const usuario = await this.validateUsuario(dto);
-    const payload = {
-      correo: usuario.correo,
+    const payload: JwtPayload = {
+      username: usuario.correo,
       sub: {
-        nombre: usuario.nombre,
+        name: usuario.nombre,
       },
     };
 
@@ -24,7 +25,7 @@ export class AuthService {
       usuario,
       backendTokens: {
         accessToken: await this.jwtService.signAsync(payload, {
-          expiresIn: '1h',
+          expiresIn: '20s',
           secret: process.env.JWT_SECRET_KEY,
         }),
         refreshToken: await this.jwtService.signAsync(payload, {
@@ -41,5 +42,25 @@ export class AuthService {
       return this.usuarioService.getPublicUserData(usuario);
     }
     throw new UnauthorizedException('Invalid credentials');
+  }
+
+  async refreshToken(user: JwtPayload) {
+    const payload = {
+      username: user.username,
+      sub: user.sub,
+    };
+
+    //!TODO: refreshToken should not get refreshed
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '20s',
+        secret: process.env.JWT_SECRET_KEY,
+      }),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+        secret: process.env.JWT_REFRESH_TOKEN_KEY,
+      }),
+    };
   }
 }
