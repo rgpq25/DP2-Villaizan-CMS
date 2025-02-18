@@ -34,9 +34,6 @@ export class RefreshJwtGuard implements CanActivate {
         secret: `${process.env.JWT_REFRESH_TOKEN_KEY}${userSecretKey}`,
       });
 
-      console.log('HERE IS THE PAYLOADD!!!');
-      console.log(payload);
-
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

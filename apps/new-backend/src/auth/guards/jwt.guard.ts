@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { JwtPayload, PublicUsuario } from 'prisma/prisma.types';
+import { JwtPayload } from 'prisma/prisma.types';
 import { UsuarioService } from 'src/usuario/usuario.service';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class JwtGuard implements CanActivate {
     );
 
     try {
-      const payload = await this.jwtService.verifyAsync<PublicUsuario>(token, {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: `${process.env.JWT_SECRET_KEY}${userSecretKey}`,
       });
 
