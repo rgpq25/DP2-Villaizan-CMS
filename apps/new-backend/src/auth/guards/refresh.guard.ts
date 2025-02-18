@@ -7,10 +7,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayload } from 'prisma/prisma.types';
+import { UsuarioService } from 'src/usuario/usuario.service';
 
 @Injectable()
 export class RefreshJwtGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private usuarioService: UsuarioService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -19,10 +23,19 @@ export class RefreshJwtGuard implements CanActivate {
 
     if (!token) throw new UnauthorizedException();
 
+    const public_payload = this.jwtService.decode<JwtPayload>(token);
+
+    const userSecretKey = await this.usuarioService.getUserSecretKey(
+      public_payload.sub.id,
+    );
+
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
-        secret: process.env.JWT_REFRESH_TOKEN_KEY,
+        secret: `${process.env.JWT_REFRESH_TOKEN_KEY}${userSecretKey}`,
       });
+
+      console.log('HERE IS THE PAYLOADD!!!');
+      console.log(payload);
 
       request['user'] = payload;
     } catch {

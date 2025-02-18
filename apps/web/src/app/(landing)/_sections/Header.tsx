@@ -1,17 +1,17 @@
 "use client";
 
-import { Button, buttonVariants } from "@repo/ui/components/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
-import { cn } from "@repo/ui/lib/utils";
 import { Usuario } from "@web/types";
 import { KeySquare, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { Button, buttonVariants } from "@repo/ui/components/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
+import { cn } from "@repo/ui/lib/utils";
 import { handleSignOut } from "../../../../actions/authActions";
 import MaxWidthWrapper from "../_components/MaxWidthWrapper";
 
-function Header({ user }: { user: Required<Usuario | null> }): JSX.Element {
+function Header({ user }: { user: Usuario | null }): JSX.Element {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -67,7 +67,7 @@ function Header({ user }: { user: Required<Usuario | null> }): JSX.Element {
                 <p className="w-fit max-w-full truncate px-2 py-1 text-sm font-bold">
                   {user.nombre + " " + user.apellido}
                 </p>
-                {user.vi_rol?.nombre === "Administrador" && (
+                {user.vi_rol?.nombre === "Administrador" ? (
                   <Link
                     className={cn(buttonVariants({ variant: "ghost" }), "flex flex-row justify-start gap-2")}
                     href="/admin"
@@ -75,6 +75,8 @@ function Header({ user }: { user: Required<Usuario | null> }): JSX.Element {
                     <KeySquare className="h-4 w-4 shrink-0" />
                     <p className="">Admin</p>
                   </Link>
+                ) : (
+                  <p>Cliente</p>
                 )}
                 <Button
                   variant={"ghost"}
@@ -127,7 +129,7 @@ function Header({ user }: { user: Required<Usuario | null> }): JSX.Element {
                 />
                 <section className="flex flex-col">
                   <p className="text-xl font-bold leading-5">{user.nombre + user.apellido}</p>
-                  <p>{user.vi_rol.nombre}</p>
+                  <p>{user.vi_rol?.nombre}</p>
                 </section>
               </div>
             )}

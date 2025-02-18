@@ -1,13 +1,25 @@
-import { DefaultSession } from 'next-auth'
-import { Usuario, ClientUser } from './types'
-
+import { DefaultSession } from "next-auth";
+import { JWT } from "next-auth/jwt";
+import { PublicUsuario, Usuario } from "./types";
 
 declare module "next-auth" {
   interface Session {
-    user: User & DefaultSession['user']
+    user: PublicUsuario;
+    backendTokens: {
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: number;
+    };
   }
+}
 
-  interface User {
-    db_info: ClientUser
+declare module "next-auth/jwt" {
+  interface JWT {
+    user: PublicUsuario;
+    backendTokens: {
+      accessToken: string;
+      refreshToken: string;
+      expiresIn: number;
+    };
   }
 }

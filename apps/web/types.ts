@@ -99,13 +99,13 @@ export type Usuario = {
   imagenperfil: string;
   puntosacumulados: number;
   id_rol: string;
-  vi_rol?: Rol;
+  vi_rol: Rol;
   id_persona: string;
-  vi_persona?: Persona;
+  vi_persona: Persona;
   creadoen: Date;
 };
 
-export type ClientUser = {
+export type PublicUsuario = {
   id: Usuario['id'],
   nombre: Usuario['nombre'],
   apellido: Usuario['apellido'],

@@ -10,13 +10,13 @@ import "./landing.css";
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await getUserSession();
 
-  if (user && (user.vi_persona.sexo === null || user.vi_persona.edad === null)) {
+  if (user && (user.vi_persona?.sexo === null || user.vi_persona?.edad === null)) {
     redirect("/ultimo-paso");
   }
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <Header user={user}/>
+      <Header user={user} />
       <LandingContent>{children}</LandingContent>
     </div>
   );

@@ -6,11 +6,15 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { PublicUsuario } from 'prisma/prisma.types';
+import { JwtPayload, PublicUsuario } from 'prisma/prisma.types';
+import { UsuarioService } from 'src/usuario/usuario.service';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private usuarioService: UsuarioService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -19,9 +23,15 @@ export class JwtGuard implements CanActivate {
 
     if (!token) throw new UnauthorizedException();
 
+    const public_payload = this.jwtService.decode<JwtPayload>(token);
+
+    const userSecretKey = await this.usuarioService.getUserSecretKey(
+      public_payload.sub.id,
+    );
+
     try {
       const payload = await this.jwtService.verifyAsync<PublicUsuario>(token, {
-        secret: process.env.JWT_SECRET_KEY,
+        secret: `${process.env.JWT_SECRET_KEY}${userSecretKey}`,
       });
 
       request['user'] = payload;

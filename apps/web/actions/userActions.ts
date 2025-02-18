@@ -1,24 +1,30 @@
 "use server";
 
 import { auth } from "@web/auth";
-import { ControlledError, Response, Usuario } from "@web/types";
-import axios from "axios";
+import { Usuario } from "@web/types";
+import axios, { AxiosResponse } from "axios";
 
-export async function getUserSession(): Promise<Required<Usuario> | null> {
+export async function getUserSession(): Promise<Usuario | null> {
   const session = await auth();
   if (!session) return null;
-  const userId = session.user.db_info.id;
+  const userId = session.user.id;
 
   let result = null;
   try {
-    const response: Response<Required<Usuario>> = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/usuarios/${userId}`
+    const response: AxiosResponse<Usuario> = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/usuario/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.backendTokens.accessToken}`,
+        },
+      }
     );
-    if (response.data.status === "Error") throw new ControlledError(response.data.message);
 
-    result = response.data.result;
-  } catch (error) {
-    console.log(error);
+    console.log(response.data);
+
+    result = response.data;
+  } catch (error: any) {
+    console.log(error.message);
     return null;
   }
 

@@ -8,12 +8,14 @@ export type PublicUsuario = Prisma.vi_usuarioGetPayload<{
     correo: true;
     imagenperfil: true;
     puntosacumulados: true;
+    vi_rol: true;
   };
 }>;
 
 export type JwtPayload = {
   username: string;
   sub: {
+    id: string;
     name: string;
   };
 };

@@ -49,7 +49,7 @@ function LoginPage() {
       <div className="mt-7 flex w-[400px] flex-col gap-2">
         <ErrorMessage message={code} />
 
-        {/* <Input placeholder="Correo electrónico" onChange={(e) => setEmail(e.target.value)} type="email" />
+        <Input placeholder="Correo electrónico" onChange={(e) => setEmail(e.target.value)} type="email" />
         <Input placeholder="Contraseña" onChange={(e) => setPassword(e.target.value)} type="password" />
         <Button
           isLoading={isLoading}
@@ -70,7 +70,7 @@ function LoginPage() {
           <Separator orientation="horizontal" className="flex-1" />
           <p className="text-muted-foreground text-sm">o</p>
           <Separator orientation="horizontal" className="flex-1" />
-        </div> */}
+        </div>
         <Button className="mt-2" variant={"outline"} onClick={() => onLoginGoogle()}>
           <img src="google-logo.svg" className="h-5 w-5" />
           <p className="text-sm">Inicia sesión con Google</p>

@@ -1,18 +1,30 @@
-import axios, { Axios } from "axios";
-import NextAuth, { AuthError, CredentialsSignin, DefaultSession } from "next-auth";
+import axios from "axios";
+import NextAuth, { AuthError, CredentialsSignin, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { ClientUser, Response, Usuario } from "./types";
+import { PublicUsuario, Response } from "./types";
 
-class CustomError extends CredentialsSignin {
-  code: string;
+async function refreshToken(token: JWT): Promise<JWT> {
+  console.log("Attempting to refresh token =========================================");
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/refresh`,
+      {},
+      {
+        headers: {
+          Authorization: `Refresh ${token.backendTokens.refreshToken}`,
+        },
+      }
+    );
 
-  constructor(code: string) {
-    super();
-    this.code = code;
-    this.name = "CustomError";
-
-    Object.setPrototypeOf(this, CustomError.prototype);
+    return {
+      ...token,
+      backendTokens: response.data,
+    };
+  } catch (error) {
+    console.log(error)
+    throw new AuthError("Refresh token failed");
   }
 }
 
@@ -29,38 +41,26 @@ class UnknownLoginError extends CredentialsSignin {
   code = "Ocurrio un error inesperado. Intenta de nuevo.";
 }
 
-function getCookieHostname() {
-  const hostname = new URL(process.env.NEXT_PUBLIC_APP_URL!).hostname;
-  const [subDomain] = hostname.split(".");
-
-  const cookieDomain = hostname.replace(`${subDomain}.`, "");
-  return cookieDomain;
-}
-
-//const domain = getCookieHostname();
-const domain = process.env.NEXT_PUBLIC_APP_URL?.includes("localhost") ? "localhost" : getCookieHostname();
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       authorize: async (credentials) => {
+        if (!credentials.email || !credentials.password) return null;
+
         const { email, password } = credentials;
 
         try {
-          const response: Response<Usuario> = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth`, {
-            email: email,
-            password: password,
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`, {
+            correo: email,
+            contrasena: password,
           });
 
-          const data = response.data;
-
-          if (data.status !== "Success") {
-            throw new InvalidLoginError(data.message);
+          if (response.status == 401) {
+            console.log(response.statusText);
+            return null;
           }
 
-          return {
-            db_info: data.result,
-          };
+          return response.data;
         } catch (error) {
           if (error instanceof InvalidLoginError) {
             throw new InvalidLoginError(error.code);
@@ -76,7 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       try {
         if (user && account?.provider === "google") {
-          const response: Response<ClientUser> = await axios.post(
+          const response: Response<PublicUsuario> = await axios.post(
             `${process.env.NEXT_PUBLIC_SERVER_URL}/usuarios/loginGoogle`,
             {
               email: user.email,
@@ -90,7 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return `/login?error=SigninError&code=${response.data.message}`;
           }
 
-          user.db_info = response.data.result;
+          user = response.data.result;
         }
 
         return true;
@@ -100,39 +100,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     },
     async jwt({ token, user }) {
-      try {
-        if (token) {
-          token.sub = user?.db_info?.id || token.sub;
-          const user_id = token.sub;
+      if (user) return { ...token, ...user };
 
-          const response: Response<ClientUser> = await axios.get(
-            `${process.env.NEXT_PUBLIC_SERVER_URL}/usuarios/${user_id}`
-          );
+      if (new Date().getTime() < token.backendTokens.expiresIn) return token; // Token has not expired
 
-          if (response.data.status !== "Success") {
-            console.log(`Error: ${response.data.message}`);
-            return null;
-          }
-
-          token.db_info = response.data.result;
-        }
-
-        return token;
-      } catch (error: any) {
-        console.log("Error when fetching user data in JWT token: ", error.response);
-        return null;
-      }
+      const newToken = await refreshToken(token);
+      return newToken;
     },
-    async session({ token, session }) {
-      //@ts-ignore
-      session.user.id = token.db_info.id;
-      //@ts-ignore
-      session.user.email = token.db_info.email;
-      //@ts-ignore
-      session.user.name = token.db_info.nombre;
-      //@ts-ignore
-      session.user.db_info = token.db_info;
-
+    async session({ token, session }: { token: JWT; session: Session }) {
+      session.user = token.user;
+      session.backendTokens = token.backendTokens;
       return session;
     },
     async redirect({ url, baseUrl }) {
@@ -147,37 +124,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // signIn: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
     // error: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
     // signOut: `${process.env.NEXT_PUBLIC_APP_URL}`,
-  },
-  cookies: {
-    sessionToken: {
-      name: domain === "localhost" ? "authjs.session-token" : `__Secure-next-auth.session-token`,
-      options: {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        domain,
-      },
-    },
-    callbackUrl: {
-      name: domain === "localhost" ? "authjs.callback-url" : `__Secure-next-auth.callback-url`,
-      options: {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        domain,
-      },
-    },
-    csrfToken: {
-      name: domain === "localhost" ? "authjs.csrf-token" : `next-auth.csrf-token`,
-      options: {
-        sameSite: "none",
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        domain,
-      },
-    },
   },
 });

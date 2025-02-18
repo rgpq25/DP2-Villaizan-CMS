@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { hash } from 'bcrypt';
 import { vi_usuario } from '@prisma/client';
 import { PublicUsuario } from 'prisma/prisma.types';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UsuarioService {
@@ -35,10 +36,34 @@ export class UsuarioService {
         correo: dto.correo,
         contrasena: await hash(dto.contrasena, 10),
         id_rol: clientRole.id,
+        secret_key: randomBytes(32).toString('hex'),
       },
     });
 
-    return this.getPublicUserData(newUser);
+    return await this.getPublicUserData(newUser);
+  }
+
+  async getUserSecretKey(id: string) {
+    const user = await this.prisma.vi_usuario.findUnique({
+      where: { id: id },
+    });
+
+    if (!user) {
+      throw new ConflictException('User not found');
+    }
+
+    return user.secret_key;
+  }
+
+  async setUserSecretKey(id: string) {
+    const secretKey = randomBytes(32).toString('hex');
+
+    await this.prisma.vi_usuario.update({
+      where: { id: id },
+      data: { secret_key: secretKey },
+    });
+
+    return secretKey;
   }
 
   async findByCorreo(correo: string) {
@@ -54,10 +79,27 @@ export class UsuarioService {
       where: {
         id: id,
       },
+      select: {
+        id: true,
+        nombre: true,
+        apellido: true,
+        correo: true,
+        imagenperfil: true,
+        puntosacumulados: true,
+        vi_rol: true,
+      },
     });
   }
 
-  getPublicUserData(usuario: vi_usuario): PublicUsuario {
+  async getPublicUserData(usuario: vi_usuario): Promise<PublicUsuario> {
+    const userRole = await this.prisma.vi_rol.findUnique({
+      where: { id: usuario.id_rol },
+    });
+
+    if (userRole === null) {
+      throw new Error('User role not found');
+    }
+
     return {
       id: usuario.id,
       nombre: usuario.nombre,
@@ -65,6 +107,7 @@ export class UsuarioService {
       correo: usuario.correo,
       imagenperfil: usuario.imagenperfil,
       puntosacumulados: usuario.puntosacumulados,
+      vi_rol: userRole,
     };
   }
 }
