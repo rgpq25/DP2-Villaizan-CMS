@@ -2,7 +2,7 @@
 
 import usePagination from "@web/hooks/usePagination";
 import { Categoria, Response } from "@web/types";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Delete, Ellipsis, FilePenLine, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@repo/ui/components/button";
@@ -72,7 +72,7 @@ function Categorias() {
   };
 
   async function createNewCategoria(categoria: Categoria) {
-    const response: Response<Categoria> = await axios.post(
+    const response: AxiosResponse<Categoria> = await axios.post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/categoria`,
       {
         nombre: categoria.nombre,
@@ -82,15 +82,13 @@ function Categorias() {
       }
     );
 
-    console.log(response);
+    if (response.status !== 200) throw new Error(response.statusText);
 
-    if (response.data.status === "Error") throw new Error(response.data.message);
-
-    setCategorias([...categorias, response.data.result]);
+    setCategorias([...categorias, response.data]);
   }
 
   async function updateCategoria(categoria: Categoria) {
-    const response: Response<null> = await axios.put(
+    const response: AxiosResponse<null> = await axios.put(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/categoria/${categoria.id}`,
       {
         nombre: categoria.nombre,
@@ -100,9 +98,7 @@ function Categorias() {
       }
     );
 
-    console.log(response);
-
-    if (response.data.status === "Error") throw new Error(response.data.message);
+    if (response.status !== 200) throw new Error(response.statusText);
 
     const newCategoria = categorias.map((_categoria) => {
       if (_categoria.id === categoria.id) {
@@ -135,13 +131,12 @@ function Categorias() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        const response: Response<Categoria[]> = await axios.get(
+        const response: AxiosResponse<Categoria[]> = await axios.get(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/categoria`
         );
-        if (response.data.status === "Error") throw new Error(response.data.message);
+        if (response.status !== 200) throw new Error(response.statusText);
 
-        console.log("Mira las categorias", response);
-        setCategorias(response.data.result);
+        setCategorias(response.data);
       } catch (error) {
         console.error("Ups! Algo salio mal -> ", error);
       } finally {

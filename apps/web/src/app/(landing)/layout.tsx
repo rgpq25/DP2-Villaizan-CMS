@@ -3,9 +3,9 @@
 import { getUserSession } from "@web/actions/userActions";
 import { redirect } from "next/navigation";
 import React from "react";
-import LandingContent from "./_components/LandingContent";
 import Header from "./_sections/Header";
 import "./landing.css";
+import LandingContent from "./_components/landing-content";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await getUserSession();

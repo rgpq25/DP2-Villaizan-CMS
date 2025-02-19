@@ -49,7 +49,7 @@ model vi_banco {
 }
 
 model vi_categoria_publicacion {
-  id                         Int                          @id @default(autoincrement())
+  id                         String                       @id @default(uuid())
   nombre                     String                       @db.VarChar(255)
   descripcion                String?
   fechacreacion              DateTime                     @default(now()) @db.Timestamp(6)
@@ -688,7 +688,7 @@ model vi_publicacion {
 
 model vi_publicacion_x_categoria {
   id_version               Int
-  id_categoria             Int
+  id_categoria             String
   vi_categoria_publicacion vi_categoria_publicacion @relation(fields: [id_categoria], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_categoria")
   vi_version_publicacion   vi_version_publicacion   @relation(fields: [id_version], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_version")
 

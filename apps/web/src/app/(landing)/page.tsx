@@ -4,13 +4,12 @@ import { Fruta, Response } from "@web/types";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import Faqs from "./_components/faqs";
-import Feats from "./_sections/Feats";
 import Frutas from "./_sections/Frutas";
 import Hero from "./_sections/Hero";
-import Nosotros from "./_sections/Nosotros";
 import NosotrosV2 from "./_sections/NosotrosV2";
 import PromoAction from "./_sections/PromoAction";
 import Publicaciones from "./_sections/Publicaciones";
+import Feats from "./_sections/feats";
 
 const MapComponent = dynamic(() => import("./_components/map"), { ssr: false });
 
