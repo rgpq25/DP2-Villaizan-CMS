@@ -9,12 +9,12 @@ import { buttonVariants } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import { productFeats } from "../../data/about_us";
 import MaxWidthWrapper from "../_components/MaxWidthWrapper";
-import HistoryTimeline from "./_components/HistoryTimeline";
-import MainHistory from "./_components/MainHistory";
-import Mision from "./_components/Mision";
-import NumberProof from "./_components/NumberProof";
-import Frutas from "./_components/Frutas";
-import Vision from "./_components/Vision";
+import HistoryTimeline from "./_components/history-timeline";
+import MainHistory from "./_components/main-history";
+import Mision from "./_components/mision";
+import NumberProof from "./_components/number-proof";
+import Frutas from "./_components/frutas";
+import Vision from "./_components/vision";
 
 
 async function getFrutas() {
@@ -96,14 +96,10 @@ async function AboutUsPage() {
       <MaxWidthWrapper className="mt-4 overflow-x-hidden font-['Abhaya_Libre']">
         <MainHistory />
         <HistoryTimeline />
-
         <NumberProof />
-
         <Vision />
         <Mision />
-
         <Frutas className="mt-10" frutas={frutas}/>
-
         <section className="h-[300px]"></section>
       </MaxWidthWrapper>
     </>

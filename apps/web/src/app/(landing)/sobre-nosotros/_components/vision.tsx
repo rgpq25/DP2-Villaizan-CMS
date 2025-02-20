@@ -1,4 +1,3 @@
-import { AspectRatio } from "@repo/ui/components/aspect-ratio"
 import { Separator } from "@repo/ui/components/separator"
 import { vision } from "@web/src/app/data/about_us"
 import Image from "next/image"
