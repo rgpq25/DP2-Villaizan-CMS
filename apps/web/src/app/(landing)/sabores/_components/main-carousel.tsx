@@ -25,7 +25,7 @@ import Typewriter from "typewriter-effect";
 import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/popover";
 import { cn } from "@repo/ui/lib/utils";
 import "./../allView.css";
-import PointClaimDialog from "./PointClaimDialog";
+import PointClaimDialog from "./point-claim-dialog";
 
 type Modes = "history" | "benefits" | "products" | null;
 

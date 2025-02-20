@@ -2,7 +2,7 @@
 
 import { Fruta, Response } from "@web/types";
 import axios from "axios";
-import MainCarousel from "./_components/MainCarousel";
+import MainCarousel from "./_components/main-carousel";
 import { auth } from "@web/auth";
 
 async function getFrutasNoUser() {
