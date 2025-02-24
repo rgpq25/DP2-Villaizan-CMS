@@ -3,8 +3,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/usuario.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { hash } from 'bcrypt';
-import { vi_usuario } from '@prisma/client';
-import { PublicUsuario } from 'prisma/prisma.types';
+import { vi_usuario } from '@repo/db';
+import { PublicUsuario } from '@repo/db';
 import { randomBytes } from 'crypto';
 
 @Injectable()

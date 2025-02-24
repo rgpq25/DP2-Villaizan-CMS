@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { LoginDto } from './dto/auth.dto';
-import { JwtPayload } from 'prisma/prisma.types';
+import { JwtPayload } from '@repo/db';
 
 const EXPIRE_TIME_MINUTES = 1;
 const EXPIRE_TIME_SECONDS = EXPIRE_TIME_MINUTES * 60;

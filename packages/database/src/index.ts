@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from "../generated/client";
+export * from "../generated/client";
 
 export type PublicUsuario = Prisma.vi_usuarioGetPayload<{
   select: {

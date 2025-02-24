@@ -1,0 +1,14 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+		"allowImportingTsExtensions": false,
+		"noEmit": false,
+		"lib": ["ES2019"],
+		"moduleResolution": "node",
+		"module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["*.d.ts", "**/*.ts", "**/*.tsx"],
+	"exclude": ["dist", "build", "node_modules"]
+}

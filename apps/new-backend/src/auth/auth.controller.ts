@@ -4,7 +4,7 @@ import { UsuarioService } from 'src/usuario/usuario.service';
 import { LoginDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh.guard';
-import { JwtPayload } from 'prisma/prisma.types';
+import { JwtPayload } from '@repo/db';
 
 @Controller('auth')
 export class AuthController {

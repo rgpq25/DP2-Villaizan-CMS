@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { JwtPayload } from 'prisma/prisma.types';
+import { JwtPayload } from '@repo/db';
 import { UsuarioService } from 'src/usuario/usuario.service';
 
 @Injectable()
