@@ -3,7 +3,8 @@ import NextAuth, { AuthError, CredentialsSignin, Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { PublicUsuario, Response } from "./types";
+import { PublicUsuario } from "@repo/db";
+import { Response } from "./types";
 
 async function refreshToken(token: JWT): Promise<JWT> {
   console.log("Attempting to refresh token =========================================");
