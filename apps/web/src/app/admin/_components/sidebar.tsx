@@ -1,6 +1,6 @@
 "use client";
 
-import { Usuario } from "@web/types";
+import { PublicUsuario, Usuario } from "@web/types";
 import { ChartColumnBig, LogOut, MapPin, Newspaper, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,7 +40,7 @@ const sidebarItems: sidebarItem[] = [
   },
 ];
 
-function Sidebar({ user }: { user: Usuario }) {
+function Sidebar({ user }: { user: PublicUsuario }) {
   const pathname = usePathname();
   const buttonStyle = [buttonVariants({ variant: "ghost" }), "hover:bg-red-900"];
 

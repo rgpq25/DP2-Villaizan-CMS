@@ -1,9 +1,11 @@
-import { Toaster } from "@repo/ui/components/toaster";
-import "@repo/ui/styles.css";
+import { getUserSession } from "@web/actions/userActions";
+import { auth } from "@web/auth";
+import SessionProvider from "@web/contexts/session-provider";
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import Head from "next/head";
+import { Toaster } from "@repo/ui/components/toaster";
+import "@repo/ui/styles.css";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -36,7 +38,9 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <Head>
@@ -45,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <body className={inter.className}>
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider data={session}>{children}</SessionProvider>
         <Toaster />
       </body>
     </html>

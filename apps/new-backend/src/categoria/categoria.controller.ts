@@ -6,11 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
 import { CreateCategoriaDto } from './dto/categoria.dto';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('categoria')
+@UseGuards(JwtGuard)
 export class CategoriaController {
   constructor(private categoriaService: CategoriaService) {}
 
