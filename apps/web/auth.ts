@@ -20,10 +20,14 @@ async function refreshToken(token: JWT): Promise<JWT> {
 
     return {
       ...token,
-      backendTokens: response.data,
+      backendTokens: {
+        accessToken: response.data.accessToken,
+        refreshToken: token.backendTokens.refreshToken,
+        expiresIn: response.data.expiresIn,
+      },
     };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new AuthError("Refresh token failed");
   }
 }

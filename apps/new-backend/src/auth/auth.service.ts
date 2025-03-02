@@ -75,10 +75,10 @@ export class AuthService {
         expiresIn: EXPIRE_TIME_SECONDS,
         secret: `${process.env.JWT_SECRET_KEY}${userSecretKey}`,
       }),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        expiresIn: '7d',
-        secret: `${process.env.JWT_REFRESH_TOKEN_KEY}${userSecretKey}`,
-      }),
+      // refreshToken: await this.jwtService.signAsync(payload, {
+      //   expiresIn: '7d',
+      //   secret: `${process.env.JWT_REFRESH_TOKEN_KEY}${userSecretKey}`,
+      // }),
       expiresIn: new Date().setTime(
         new Date().getTime() + EXPIRE_TIME_MILISECONDS,
       ),
